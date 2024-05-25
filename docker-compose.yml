@@ -1,0 +1,62 @@
+version: '3.4'
+
+networks:
+  webapiapp:
+
+
+services:
+  webapiiidb:
+    container_name: webapiii-db
+    image: 'mcr.microsoft.com/mssql/server:2022-latest'
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=mAlatya.44a
+    volumes:
+      - sql-data:/var/opt/mssql/data
+      - sql-log:/var/opt/mssql/log
+      # - sql-backup:/var/opt/mssql/backup
+    ports:
+      - '8002:1433'
+    networks:
+      - webapiapp
+  webapiii:
+    container_name: webapiii-app
+    image: webapiii
+    build:
+      context: ./WebApiii
+      dockerfile: Dockerfile
+    ports:
+      - '8001:80'
+    depends_on:
+      - webapiiidb
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - DB_HOST=webapiiidb
+      - DB_NAME=products
+      - DB_USER=sa
+      - DB_PASSWORD=mAlatya.44a
+      - SA_PASSWORD=mAlatya.44a
+    networks:
+      - webapiapp
+volumes:
+  sql-data:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: "C:/Users/ibrah/Desktop/temp/data"
+  sql-log:
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: "C:/Users/ibrah/Desktop/temp/log"
+
+#  sql-backup:
+#       driver: local
+#       driver_opts:
+#           o: bind
+#           type: none
+#           device: "C:/Users/ibrah/Desktop/temp/backup"
