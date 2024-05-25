@@ -27,9 +27,9 @@ namespace WebApiii.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(@"Server=webapiiidb,1433;Database=products; User Id=sa;Password=mAlatya.44a;TrustServerCertificate=true;");
+                optionsBuilder.UseSqlServer(@"Server=webapiiidb,1433;Database=products; User Id=sa;Password=mAlatya.44a;Encrypt=True;TrustServerCertificate=True;");
             }
-            base.OnConfiguring(optionsBuilder);
+            base.OnConfiguring(optionsBuilder); 
         }
 
 
