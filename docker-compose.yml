@@ -2,7 +2,8 @@ version: '3.4'
 
 networks:
   webapiapp:
-
+  nginx-network:
+    # Nginx için yeni ağ ekledik
 
 services:
   webapiiidb:
@@ -20,6 +21,7 @@ services:
       - '8002:1433'
     networks:
       - webapiapp
+
   webapiii:
     container_name: webapiii-app
     image: webapiii
@@ -40,6 +42,21 @@ services:
       - SA_PASSWORD=mAlatya.44a
     networks:
       - webapiapp
+
+  proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+    networks:
+      - nginx-network
+
 volumes:
   sql-data:
     driver: local
