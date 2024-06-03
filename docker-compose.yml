@@ -2,8 +2,7 @@ version: '3.4'
 
 networks:
   webapiapp:
-  nginx-network:
-    # Nginx için yeni ağ ekledik
+
 
 services:
   webapiiidb:
@@ -43,19 +42,19 @@ services:
     networks:
       - webapiapp
 
-  proxy-manager:
+  nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: nginx-proxy-manager
     restart: unless-stopped
     ports:
-      - '80:80'
-      - '81:81'
-      - '443:443'
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
     volumes:
       - ./data:/data
       - ./letsencrypt:/etc/letsencrypt
     networks:
-      - nginx-network
+      - webapiapp
 
 volumes:
   sql-data:
@@ -70,10 +69,9 @@ volumes:
       o: bind
       type: none
       device: "C:/Users/ibrah/Desktop/temp/log"
-
-#  sql-backup:
-#       driver: local
-#       driver_opts:
-#           o: bind
-#           type: none
-#           device: "C:/Users/ibrah/Desktop/temp/backup"
+  # sql-backup:
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: "C:/Users/ibrah/Desktop/temp/backup"
