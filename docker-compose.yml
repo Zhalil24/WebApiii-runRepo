@@ -12,9 +12,9 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=mAlatya.44a
-    volumes:
-      - sql-data:/var/opt/mssql/data
-      - sql-log:/var/opt/mssql/log
+      # volumes:
+      #   - sql-data:/var/opt/mssql/data
+      #   - sql-log:/var/opt/mssql/log
       # - sql-backup:/var/opt/mssql/backup
     ports:
       - '8002:1433'
@@ -55,20 +55,19 @@ services:
       - ./letsencrypt:/etc/letsencrypt
     networks:
       - webapiapp
-
-volumes:
-  sql-data:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "C:/Users/ibrah/Desktop/temp/data"
-  sql-log:
-    driver: local
-    driver_opts:
-      o: bind
-      type: none
-      device: "C:/Users/ibrah/Desktop/temp/log"
+  # volumes:
+  #   sql-data:
+  #     driver: local
+  #     driver_opts:
+  #       o: bind
+  #       type: none
+  #       device: "C:/Users/ibrah/Desktop/temp/data"
+  #   sql-log:
+  #     driver: local
+  #     driver_opts:
+  #       o: bind
+  #       type: none
+  #       device: "C:/Users/ibrah/Desktop/temp/log"
   # sql-backup:
   #   driver: local
   #   driver_opts:
