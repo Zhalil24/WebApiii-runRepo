@@ -102,14 +102,46 @@ namespace WebApiii.Controllers
             return Ok(response);
         }
 
-        // api/Image/GetImages
+        // api/Image/GetImage
+        [HttpGet("GetImage")]
+        public IActionResult GetImage(string productcode)
+        {
+            try
+            {
+
+                string filepath = GetFilePath(productcode);
+                string imagepath = Path.Combine(filepath, $"{productcode}.png");
+
+
+                if (System.IO.File.Exists(imagepath))
+                {
+                    // Resmin URL'sini oluşturdum
+                    string imageUrl = $"{Request.Scheme}://{Request.Host}/Upload/product/{productcode}/{productcode}.png";
+                    var response = new { url = imageUrl };
+                    return Ok(response);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, "Internal Server Error");
+            }
+        }
+
+
+
+
         [HttpGet("GetImages")]
         public IActionResult GetImages(string productcode)
         {
             try
             {
                 // Klasör yolunu oluştur
-                string folderPath = Path.Combine("wwwroot", "Upload", "product", productcode);
+                string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Upload", "product", productcode);
 
                 if (Directory.Exists(folderPath))
                 {
@@ -134,6 +166,7 @@ namespace WebApiii.Controllers
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
 
 
 
