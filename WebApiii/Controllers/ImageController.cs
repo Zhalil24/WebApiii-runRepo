@@ -94,7 +94,7 @@ namespace WebApiii.Controllers
             catch (Exception ex)
             {
                 errorcount++;
-                response.ResponseCode = 500; // Hata durumunu ifade eden bir HTTP kodu
+                response.ResponseCode = 500;
                 response.ErrorMessage = ex.Message;
             }
 
@@ -102,34 +102,36 @@ namespace WebApiii.Controllers
             return Ok(response);
         }
 
-
+        // api/Image/GetImage
         [HttpGet("GetImage")]
         public IActionResult GetImage(string productcode)
         {
             try
             {
-                // Belirtilen ürün koduna sahip resmin dosya yolunu oluşturun
+
                 string filepath = GetFilePath(productcode);
                 string imagepath = Path.Combine(filepath, $"{productcode}.png");
 
-                // Dosya varsa, resmin URL'sini oluşturun ve geri dönün
+
                 if (System.IO.File.Exists(imagepath))
                 {
-                    // Resmin URL'sini oluşturun
+                    // Resmin URL'sini oluşturdum
                     string imageUrl = $"{Request.Scheme}://{Request.Host}/Upload/product/{productcode}/{productcode}.png";
-                    return Ok(imageUrl); // Resmin URL'sini başarılı bir şekilde dönün
+                    var response = new { url = imageUrl };
+                    return Ok(response);
                 }
                 else
                 {
-                    return NotFound(); // Dosya bulunamadığı için 404 hatası döndürün
+                    return NotFound();
                 }
             }
             catch (Exception ex)
             {
-                // Herhangi bir istisna durumunda hata işleme kodu buraya yazılabilir
-                return StatusCode(500, "Internal Server Error"); // Sunucu tarafında bir hata oluştuğunda 500 hatası döndürün
+
+                return StatusCode(500, "Internal Server Error");
             }
         }
+
 
 
 
@@ -142,7 +144,7 @@ namespace WebApiii.Controllers
 
             foreach (var file in files)
             {
-                string imageBase64 = ToBase64(file); 
+                string imageBase64 = ToBase64(file);
                 base64Strings.Add(imageBase64);
             }
 
@@ -190,8 +192,8 @@ namespace WebApiii.Controllers
             try
             {
                 string Filepath = GetFilePath(productcode);
-               
-                if(System.IO.Directory.Exists(Filepath))
+
+                if (System.IO.Directory.Exists(Filepath))
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(Filepath);
                     FileInfo[] fileInfos = directoryInfo.GetFiles();
@@ -202,22 +204,34 @@ namespace WebApiii.Controllers
                         if (System.IO.File.Exists(imagepath))
 
                         {
-                            string _Imageurl = hosturl + "/Upload/product/" + productcode + "/" + filename;
+                            string _Imageurl = $"{Request.Scheme}://{Request.Host}/Upload/product/{productcode}/{filename}";
                             Imageurl.Add(_Imageurl);
                         }
                     }
                 }
 
-                
+
             }
             catch (Exception ex)
             {
 
+                return StatusCode(500, "Internal Server Error");
             }
-            return Ok(Imageurl);
+
+            // Her bir resmin URL'sini JSON nesneleri içinde toplar
+            List<object> responseList = new List<object>();
+            foreach (string url in Imageurl)
+            {
+                responseList.Add(new { url });
+            }
+
+
+            return Ok(responseList);
 
 
         }
+
+
 
 
 
@@ -237,7 +251,7 @@ namespace WebApiii.Controllers
                 if (System.IO.File.Exists(imagepath))
                 {
                     MemoryStream stream = new();
-                    using(FileStream fileStream = new FileStream(imagepath, FileMode.Open))
+                    using (FileStream fileStream = new FileStream(imagepath, FileMode.Open))
                     {
                         await fileStream.CopyToAsync(stream);
                     }
@@ -257,7 +271,7 @@ namespace WebApiii.Controllers
             {
                 return NotFound();
             }
-          
+
 
         }
 
@@ -296,7 +310,7 @@ namespace WebApiii.Controllers
 
         }
 
-         
+
 
         [HttpGet("MultiRemove")]
         public async Task<IActionResult> MultiRemove(string productcode)
@@ -310,7 +324,7 @@ namespace WebApiii.Controllers
                 string Filepath = GetFilePath(productcode);
 
 
-                if(System.IO.Directory.Exists(Filepath))
+                if (System.IO.Directory.Exists(Filepath))
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(Filepath);
                     FileInfo[] fileInfos = directoryInfo.GetFiles();
