@@ -102,23 +102,27 @@ namespace WebApiii.Controllers
             return Ok(response);
         }
 
-        // api/Image/GetImage
-        [HttpGet("GetImage")]
-        public IActionResult GetImage(string productcode)
+        // api/Image/GetImages
+        [HttpGet("GetImages")]
+        public IActionResult GetImages(string productcode)
         {
             try
             {
+                // Klasör yolunu oluştur
+                string folderPath = Path.Combine("wwwroot", "Upload", "product", productcode);
 
-                string filepath = GetFilePath(productcode);
-                string imagepath = Path.Combine(filepath, $"{productcode}.png");
-
-
-                if (System.IO.File.Exists(imagepath))
+                if (Directory.Exists(folderPath))
                 {
-                    // Resmin URL'sini oluşturdum
-                    string imageUrl = $"{Request.Scheme}://{Request.Host}/Upload/product/{productcode}/{productcode}.png";
-                    var response = new { url = imageUrl };
-                    return Ok(response);
+                    // Klasördeki tüm dosyaları al
+                    var files = Directory.GetFiles(folderPath);
+
+                    // Resim URL'lerini oluştur
+                    var imageUrls = files.Select(file => new
+                    {
+                        url = $"{Request.Scheme}://{Request.Host}/Upload/product/{productcode}/{Path.GetFileName(file)}"
+                    }).ToList();
+
+                    return Ok(imageUrls);
                 }
                 else
                 {
@@ -127,10 +131,10 @@ namespace WebApiii.Controllers
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, "Internal Server Error");
             }
         }
+
 
 
 
